@@ -113,3 +113,9 @@ WHERE
 		column_name NOT IN (x, y, z…)	
 	WHERE
 		column_name IN (SELECT some_column FROM some_table)
+
+
+
+
+
+End
