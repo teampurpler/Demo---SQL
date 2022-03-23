@@ -1,0 +1,120 @@
+The main takeaways from this Demo2 :
+
+1. CRUD Operations
+All databases need to be able to handle 4 basic operations, abbreviated CRUD
+- Create
+    - CREATE: Creates a container for data to be stored (e.g. a table)
+    - INSERT: Put data into that container
+    - COPY: Bulk data loading
+- Read
+    - SELECT: Primary way of retrieving data from a database
+- Update
+    - UPDATE: Change data within a table
+    - ALTER: Change the structure of a table
+- Delete
+    - DROP: Remove a database object
+    - DELETE: Remove data from a table
+
+
+
+
+2. GROUP BY
+- Aggregate data into specified groups
+- Scans multiple rows and collapses them into a single aggregate value
+- How does it work?
+    - Combine rows that have the same value for the grouping variable
+    - Use an aggregate function (e.g. SUM, AVG, COUNT … ) to collapse/summarize the other columns of interest into a single value for the group
+    - In the SELECT, all columns are either 1) part of the group or 2) being aggregated.
+    - Applied after the WHERE clause
+        - Rows are filtered out first
+        - Then aggregated
+    - The result will always have one row per group
+    - Groups can consist of one or more columns 
+
+
+
+
+3. Common Aggregation Functions
+COUNT
+    - COUNT(1) or COUNT(*): Counts the number of rows
+    - COUNT(col_name): Counts the number of Non-NULL values in col_name
+    - COUNT(DISTINCT col_name):
+        - Counts the number of distinct Non-NULL values in col_name
+SUM
+    - SUM(col_name): Sums the values in col_name
+AVG
+    - AVG(col_name): Averages the values in col_name
+MAX/MIN
+    - MAX(col_name): Return the maximum value in col_name
+    - MIN(col_name): Return the minimum value in col_name
+
+
+
+
+4. NULL values and Aggregations
+If one of the grouping column values is NULL …
+    - NULL is treated as a group value and all NULLs are grouped together
+If NULLs are aggregated
+    - SUM, MAX, MIN, COUNT(col_name), COUNT(DISTINCT col_name)
+        - NULLs are ignored
+    - COUNT(1) or COUNT(*)
+        - NULLs are counted
+
+
+
+5. CASE statements and Aggregations
+CASE statements can be used to create new groups
+    - Transform existing columns/dimensions into new ones to categorize the data in new ways
+CASE statements can be used inside an aggregation to only selectively aggregate
+    - Useful for calculating % of total
+        - SUM(CASE WHEN brand = ‘Toyota’ THEN sales ELSE 0 END) * 100.0 / SUM(sales)
+
+
+
+
+6. Multiple levels of aggregation
+Sometimes you need an aggregation on top of another aggregation.
+    Example: What is the highest average selling price among car models?
+
+Solution: Use a subquery to do the first aggregation (average price in the example above). Then aggregate the result of the subquery in the outer query with a second aggregation 
+(maximum of the average price in the example above)
+
+
+
+
+7. HAVING clause
+HAVING is a post-aggregation filter
+   - This is in contrast to WHERE, which is a pre-aggregation filter
+   - In other words, WHERE filters rows and HAVING filters groups
+   - Typically, use an aggregation-based filter in HAVING
+      - e.g. HAVING COUNT(1) > 1
+
+
+
+8. DATE data types
+Dates are the least standardized part of SQL
+Date data types:
+    - DATE: Stores a date e.g. 2021-01-01
+    - TIME: Stores a time
+    - TIMESTAMP: Stores a date and a time
+        - e.g. 2021-01-01 01:59:42.892321 +00:00
+        - Sidenote: You may see “timestamps” in data that look like this 1636274895
+           - This is unixtime. It represents the number of elapsed seconds from 1970-01-01 and is used to make time-based calculations more convenient
+    - INTERVAL: Stores a time interval e.g. 1 year or 3 seconds
+
+
+
+9. DATE functions
+NOW() : Returns the current timestamp
+CURRENT_DATE : Returns the current date
+CURRENT_TIME : Returns the current time
+
+DATE_PART(part_string ,date) : Extracts a particular part of the date or time
+DATE_TRUNC(granularity, date) : Truncates a date or timestamp to a certain precision
+Intervals are used to add or subtract time information 
+   - e.g SELECT ‘2021-01-01’::DATE + ‘1 day’::INTERVAL
+
+
+
+
+END
